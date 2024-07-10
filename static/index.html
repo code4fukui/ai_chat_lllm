@@ -1,0 +1,139 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><link rel="icon" href="data:">
+<title>AIチャット(一問一答LLM)</title>
+</head><body>
+
+<div id=body>
+
+<h1>AIチャット(一問一答LLM)</h1>
+<br>
+<div id=view></div>
+
+</div>
+
+<div id=bottom>
+<form id=form>
+<!--
+<textarea id=q placeholder="AIへの会話をここに書きます" autocomplete="off"></textarea>
+-->
+<input type="text" id=q placeholder="AIへの会話をここに書きます" autocomplete="off">
+<input type=submit value="送信"><br>
+<!--<button id=btncls>クリア</button>-->
+</form>
+<a href=https://github.com/code4fukui/ai_chat_llm/>src on GitHub</a> / LLM: <a href=https://huggingface.co/cyberagent/open-calm-7b>open-calm-7b</a><br>
+</div>
+
+<script type="module">
+import { fetchJSON } from "https://js.sabae.cc/fetchJSON.js";
+import { sleep } from "https://js.sabae.cc/sleep.js";
+
+form.onsubmit = async (e) => {
+  e.preventDefault();
+  const prompt = q.value;
+  if (!prompt) {
+    return;
+  }
+
+  const div = document.createElement("div");
+  div.textContent = prompt;
+  div.className = "user";
+  q.value = "";
+  view.appendChild(div);
+  view.scrollIntoView({ block: "end", behavior: "smooth" });
+
+  const res = await fetchJSON("/api/reply", prompt);
+
+  const div2 = document.createElement("div");
+  div2.className = "assistant";
+  const ss = res.split("\n");
+  div2.textContent = ss[0];
+  view.appendChild(div2);
+  view.scrollIntoView({ block: "end", behavior: "smooth" });
+  for (let i = 1; i < ss.length; i++) {
+    await sleep(1500);
+    div2.textContent += "\n\n" + ss[i];
+    view.scrollIntoView({ block: "end", behavior: "smooth" });
+  }
+};
+</script>
+
+<style>
+body {
+  margin: 0;
+  font-family: sans-serif;
+}
+#body {
+  padding: .5em;
+}
+textarea {
+  font-size: 16px;
+  width: 90vw;
+  height: 5em;
+}
+select {
+  margin-right: .5em;
+}
+#q {
+  padding: .5em .5em;
+  margin: .5em 0 0 0;
+  width: 80%;
+  font-size: 16px;
+  resize: none;
+}
+input[type=submit] {
+  margin: .8em 0;
+  padding: .3em;
+  vertical-align: top;
+}
+.user, .assistant {
+  white-space: pre-wrap;
+  border: 1px solid black;
+  border-radius: .3em;
+  padding: .3em .5em;
+  margin: .3em;
+}
+.user {
+  margin-right: 1.5em;
+  border-bottom-left-radius: 0;
+
+  /*
+  background-color: #5fad56;
+  color: white;
+  */
+  /*
+  background-color: #ff3366;
+  color: white;
+  */
+}
+.assistant {
+  margin-left: 1.5em;
+  border-bottom-right-radius: 0;
+
+  /*
+  background-color: #ff7592;
+  color: white;
+  */
+  /*
+  background-color: #ffff66;
+  color: #000000;
+  */
+}
+#view {
+  padding-bottom: 9.5em;
+
+  /*
+  background-color: #f5f5f5;
+  */
+}
+#bottom {
+  position: fixed;
+  bottom: 0;
+  width: 100vw;
+  padding: .5em;
+  margin: 0;
+  background-color: #f0f0f0;
+}
+a {
+  color: gray !important;
+}
+</style>
+</body></html>
