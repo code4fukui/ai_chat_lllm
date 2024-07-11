@@ -25,6 +25,36 @@
 <script type="module">
 import { fetchJSON } from "https://js.sabae.cc/fetchJSON.js";
 import { sleep } from "https://js.sabae.cc/sleep.js";
+import { Muno } from "https://code4fukui.github.io/muno3/muno.js";
+
+const showChat = async (res) => {
+  const div2 = document.createElement("div");
+  div2.className = "assistant";
+  const ss = res.split("\n");
+  div2.textContent = ss[0];
+  view.appendChild(div2);
+  view.scrollIntoView({ block: "end", behavior: "smooth" });
+  for (let i = 1; i < ss.length; i++) {
+    await sleep(1500);
+    div2.textContent += "\n\n" + ss[i];
+    view.scrollIntoView({ block: "end", behavior: "smooth" });
+  }
+};
+
+const muno = new Muno((s, b) => {
+  if (!b) {
+    showChat(s);
+  }
+});
+
+const chat = async (prompt) => {
+  const res = muno.input(prompt);
+  console.log(res);
+  if (res) return;
+  showChat("えーっと・・・");
+  const res2 = await fetchJSON("/api/reply", prompt);
+  showChat(res2);
+};
 
 form.onsubmit = async (e) => {
   e.preventDefault();
@@ -40,19 +70,7 @@ form.onsubmit = async (e) => {
   view.appendChild(div);
   view.scrollIntoView({ block: "end", behavior: "smooth" });
 
-  const res = await fetchJSON("/api/reply", prompt);
-
-  const div2 = document.createElement("div");
-  div2.className = "assistant";
-  const ss = res.split("\n");
-  div2.textContent = ss[0];
-  view.appendChild(div2);
-  view.scrollIntoView({ block: "end", behavior: "smooth" });
-  for (let i = 1; i < ss.length; i++) {
-    await sleep(1500);
-    div2.textContent += "\n\n" + ss[i];
-    view.scrollIntoView({ block: "end", behavior: "smooth" });
-  }
+  await chat(prompt);
 };
 </script>
 
