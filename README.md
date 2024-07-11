@@ -41,5 +41,7 @@ edit .env
 nohup deno run -A aichat.js 5555 &
 ```
 
+open http://localhost:5555/
+
 
 
