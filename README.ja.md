@@ -1,23 +1,21 @@
 # ai_chat_lllm
 
-> 日本語のREADMEはこちらです: [README.ja.md](README.ja.md)
+ローカルの大規模言語モデル（LLM）"OpenCALM-chat-api"をさくらの高火力コンピューティング NVIDIA V100にデプロイしたものです。
 
-A local large language model (LLM) "OpenCALM-chat-api" deployed on さくらの高火力コンピューティング NVIDIA V100.
+## 機能
+- OpenCALM-7B言語モデルによるチャットAPIの提供
+- 応答のキャッシュによる後続クエリの高速化
+- デバッグおよび分析用のチャット履歴の記録
 
-## Features
-- Provides a chat API powered by the OpenCALM-7B language model
-- Caches responses for faster subsequent queries
-- Logs chat history for debugging and analysis
-
-## Requirements
+## 要件
 - Ubuntu 22.04
-- NVIDIA GPU with CUDA support
-- Python 3 and required dependencies
+- CUDA対応NVIDIA GPU
+- Python 3および必要な依存パッケージ
 
-## Usage
+## 使用方法
 
-### Setup
-1. Install required system packages:
+### セットアップ
+1. 必要なシステムパッケージのインストール:
    ```sh
    sudo apt-get update
    sudo apt-get install gcc gnupg
@@ -28,7 +26,7 @@ A local large language model (LLM) "OpenCALM-chat-api" deployed on さくらの�
    sudo apt-get update
    sudo apt-get install nvidia-driver-550
    ```
-2. Install Python packages:
+2. Pythonパッケージのインストール:
    ```sh
    sudo apt install python3 python3-pip
    sudo apt install uvicorn
@@ -36,22 +34,22 @@ A local large language model (LLM) "OpenCALM-chat-api" deployed on さくらの�
    cd OpenCALM-chat-api
    pip install -r requirements.txt
    ```
-3. Download the OpenCALM-7B model:
+3. OpenCALM-7Bモデルのダウンロード:
    ```sh
    python3 -c 'import torch; from transformers import AutoModelForCausalLM, AutoTokenizer; model = AutoModelForCausalLM.from_pretrained("cyberagent/open-calm-7b", device_map="auto", torch_dtype=torch.float16); model.save_pretrained("/home/ubuntu/model/cyberagent/open-calm-7"); tokenizer = AutoTokenizer.from_pretrained("cyberagent/open-calm-7b"); tokenizer.save_pretrained("/home/ubuntu/model/cyberagent/open-calm-7")'
    ```
-4. Edit the `main.py` file to set the BASIC auth credentials.
+4. `main.py`ファイルを編集し、BASIC認証の認証情報を設定します。
 
-### Start the API server
-1. Start the test server:
+### APIサーバーの起動
+1. テストサーバーの起動:
    ```sh
    nohup uvicorn main:app --reload --host 0.0.0.0 &
    ```
-2. Start the production server:
+2. 本番サーバーの起動:
    ```sh
    nohup deno run -A aichat.js 5555 &
    ```
-3. Open the API in your browser: http://localhost:5555/
+3. ブラウザでAPIを開く: http://localhost:5555/
 
-## License
-MIT License — see [LICENSE](LICENSE).
+## ライセンス
+MIT License — 詳細は [LICENSE](LICENSE) を参照してください。
